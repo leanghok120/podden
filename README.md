@@ -8,7 +8,7 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 
 - [x] play songs with beep
 - [x] pause, next, prev songs
-- [ ] play a random song after finished
+- [x] play the next song after finished
 - [ ] add albums and artists page
 - [ ] add lyrics 
 - [ ] fast forward songs

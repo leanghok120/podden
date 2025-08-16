@@ -126,8 +126,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.streamer = msg.streamer
 
 	case finishedMsg:
-		m.loaded = true
-		m.playing = false
+		var cmd tea.Cmd
+		m.list, cmd = m.nextSong(m.list)
+		return m, cmd
 	}
 
 	if m.loaded {
