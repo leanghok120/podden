@@ -11,4 +11,5 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [ ] play a random song after finished
 - [ ] add albums and artists page
 - [ ] add lyrics 
+- [ ] fast forward songs
 - [ ] add cover image
