@@ -7,6 +7,8 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/speaker"
 )
 
 type model struct {
@@ -15,15 +17,53 @@ type model struct {
 	height      int
 	loaded      bool
 	playing     bool
+	paused      bool
 	currPlaying music
+	streamer    beep.StreamSeekCloser
 }
 
 func main() {
-	p := tea.NewProgram(model{loaded: false, playing: false}, tea.WithAltScreen())
+	p := tea.NewProgram(model{loaded: false, playing: false, paused: false}, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
+}
+
+// helper functions
+// place content in the center
+func (m model) center(content string) string {
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
+}
+
+// play next song
+func (m model) nextSong(l list.Model) (list.Model, tea.Cmd) {
+	// stop currPlaying music
+	if m.playing {
+		speaker.Clear()
+	}
+
+	l.CursorDown()
+	selected, ok := l.SelectedItem().(music)
+	if !ok {
+		return l, nil
+	}
+	return l, func() tea.Msg { return playMusic(selected) }
+}
+
+// play previous song
+func (m model) prevSong(l list.Model) (list.Model, tea.Cmd) {
+	// stop currPlaying music
+	if m.playing {
+		speaker.Clear()
+	}
+
+	l.CursorUp()
+	selected, ok := l.SelectedItem().(music)
+	if !ok {
+		return l, nil
+	}
+	return l, func() tea.Msg { return playMusic(selected) }
 }
 
 func (m model) Init() tea.Cmd {
@@ -45,6 +85,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if selected, ok := m.list.SelectedItem().(music); ok {
 				return m, func() tea.Msg { return playMusic(selected) }
 			}
+
+		case " ":
+			if m.playing {
+				if m.paused {
+					speaker.Unlock()
+					m.paused = false
+				} else {
+					speaker.Lock()
+					m.paused = true
+				}
+			}
+
+		case "n":
+			var cmd tea.Cmd
+			m.list, cmd = m.nextSong(m.list)
+			return m, cmd
+
+		case "p":
+			var cmd tea.Cmd
+			m.list, cmd = m.prevSong(m.list)
+			return m, cmd
 		}
 
 	case musicsMsg:
@@ -62,6 +123,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.loaded = false
 		m.playing = true
 		m.currPlaying = msg.music
+		m.streamer = msg.streamer
 
 	case finishedMsg:
 		m.loaded = true
@@ -99,13 +161,15 @@ func (m model) View() string {
 		Foreground(lipgloss.Color("230")).
 		Padding(0, 1)
 
+	// strings
+	songs := m.list.View()
+	playing := fmt.Sprintf("%s\n\n%s\n", title.Render(m.currPlaying.title), m.currPlaying.artist)
+
 	if m.loaded {
-		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, screenStyle.Render(m.list.View()))
+		return m.center(screenStyle.Render(songs))
 	}
 	if m.playing {
-		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, screenStyle.Render(
-			fmt.Sprintf("%s\n\n%s\n", title.Render(m.currPlaying.title), m.currPlaying.artist),
-		))
+		return m.center(screenStyle.Render(playing))
 	}
 	return "loading music..."
 }

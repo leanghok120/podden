@@ -22,9 +22,13 @@ type music struct {
 type (
 	errMsg      struct{ err error }
 	musicsMsg   struct{ musics []music }
-	playingMsg  struct{ music music }
 	finishedMsg struct{}
 )
+
+type playingMsg struct {
+	music    music
+	streamer beep.StreamSeekCloser
+}
 
 // list.Item implementation
 func (s music) Title() string       { return s.title }
@@ -88,7 +92,7 @@ func playMusic(m music) tea.Msg {
 	}()
 
 	return tea.Batch(
-		func() tea.Msg { return playingMsg{music: m} },
+		func() tea.Msg { return playingMsg{music: m, streamer: streamer} },
 		func() tea.Msg { return <-finishedMsgChan },
 	)()
 }
