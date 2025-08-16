@@ -56,6 +56,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.list, cmd = m.list.Update(msg)
 		m.list.SetShowHelp(false)
+		m.list.SetShowPagination(false)
+		m.list.SetShowStatusBar(false)
 		return m, cmd
 	}
 	return m, nil
