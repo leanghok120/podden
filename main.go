@@ -9,33 +9,15 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type songItem struct {
-	title  string
-	artist string
-}
-
-func (s songItem) Title() string       { return s.title }
-func (s songItem) Description() string { return s.artist }
-func (s songItem) FilterValue() string { return s.title }
-
 type model struct {
 	list   list.Model
 	width  int
 	height int
+	loaded bool
 }
 
 func main() {
-	items := []list.Item{
-		songItem{"Song 1", "Artist A"},
-		songItem{"Song 2", "Artist B"},
-		songItem{"Song 3", "Artist C"},
-	}
-
-	l := list.New(items, list.NewDefaultDelegate(), 30, 10)
-	l.Title = "Songs"
-
-	m := model{list: l}
-	p := tea.NewProgram(m, tea.WithAltScreen())
+	p := tea.NewProgram(model{loaded: false}, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
@@ -43,7 +25,7 @@ func main() {
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return fetchMusics
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -57,12 +39,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		}
+
+	case musicsMsg:
+		items := make([]list.Item, len(msg.musics))
+		for i, m := range msg.musics {
+			items[i] = m
+		}
+		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l.Title = "Songs"
+
+		m.list = l
+		m.loaded = true
 	}
 
-	var cmd tea.Cmd
-	m.list, cmd = m.list.Update(msg)
-	m.list.SetShowHelp(false)
-	return m, cmd
+	if m.loaded {
+		var cmd tea.Cmd
+		m.list, cmd = m.list.Update(msg)
+		m.list.SetShowHelp(false)
+		return m, cmd
+	}
+	return m, nil
 }
 
 func (m model) View() string {
@@ -72,5 +68,8 @@ func (m model) View() string {
 		Padding(1, 2).
 		Width(30)
 
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, screenStyle.Render(m.list.View()))
+	if m.loaded {
+		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, screenStyle.Render(m.list.View()))
+	}
+	return "loading music..."
 }
