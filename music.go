@@ -4,19 +4,26 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dhowden/tag"
+	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/mp3"
+	"github.com/gopxl/beep/speaker"
 )
 
 type music struct {
 	title  string
 	artist string
+	path   string
 }
 
 type (
-	errMsg    struct{ err error }
-	musicsMsg struct{ musics []music }
+	errMsg      struct{ err error }
+	musicsMsg   struct{ musics []music }
+	playingMsg  struct{ music music }
+	finishedMsg struct{}
 )
 
 // list.Item implementation
@@ -51,9 +58,37 @@ func fetchMusics() tea.Msg {
 			return nil
 		}
 
-		musics = append(musics, music{title: metadata.Title(), artist: metadata.Artist()})
+		musics = append(musics, music{title: metadata.Title(), artist: metadata.Artist(), path: path})
 		return nil
 	})
 
 	return musicsMsg{musics}
+}
+
+func playMusic(m music) tea.Msg {
+	f, err := os.Open(m.path)
+	if err != nil {
+		return errMsg{err}
+	}
+
+	streamer, format, err := mp3.Decode(f)
+	if err != nil {
+		f.Close()
+		return errMsg{err}
+	}
+
+	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+
+	finishedMsgChan := make(chan tea.Msg, 1)
+
+	go func() {
+		speaker.Play(beep.Seq(streamer, beep.Callback(func() {
+			finishedMsgChan <- finishedMsg{}
+		})))
+	}()
+
+	return tea.Batch(
+		func() tea.Msg { return playingMsg{music: m} },
+		func() tea.Msg { return <-finishedMsgChan },
+	)()
 }

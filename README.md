@@ -6,4 +6,6 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 
 ## todos
 
-- [ ] play songs with beep
+- [x] play songs with beep
+- [ ] pause, stop, next, prev songs
+- [ ] add lyrics 
