@@ -14,4 +14,5 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [x] show elapsed time / total time
 - [x] add lyrics 
 - [ ] fast forward songs
+- [ ] fix other language messing up the layout
 - [ ] add cover image
