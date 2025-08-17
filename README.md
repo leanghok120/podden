@@ -10,7 +10,7 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [x] pause, next, prev songs
 - [x] play the next song after finished
 - [x] add albums page
-- [ ] add artists page
+- [x] add artists page
 - [ ] add lyrics 
 - [ ] fast forward songs
 - [ ] add cover image

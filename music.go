@@ -25,10 +25,16 @@ type album struct {
 	tracks []music
 }
 
+type artist struct {
+	name   string
+	tracks []music
+}
+
 type (
 	errMsg      struct{ err error }
 	musicsMsg   struct{ musics []music }
 	albumsMsg   struct{ albums []album }
+	artistsMsg  struct{ artists []artist }
 	finishedMsg struct{}
 )
 
@@ -45,6 +51,10 @@ func (s music) FilterValue() string { return s.title }
 func (a album) Title() string       { return a.title }
 func (a album) Description() string { return a.artist }
 func (a album) FilterValue() string { return a.title }
+
+func (a artist) Title() string       { return a.name }
+func (a artist) Description() string { return "" }
+func (a artist) FilterValue() string { return a.name }
 
 func fetchMusics() tea.Msg {
 	var musics []music
@@ -143,6 +153,65 @@ func fetchAlbums() tea.Msg {
 	}
 
 	return albumsMsg{albums}
+}
+
+func fetchArtists() tea.Msg {
+	artistsMap := make(map[string]artist)
+	homeDir, _ := os.UserHomeDir()
+	dir := filepath.Join(homeDir, "Music")
+
+	filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+
+		ext := filepath.Ext(path)
+		if ext != ".mp3" && ext != ".flac" && ext != ".m4a" {
+			return nil
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return nil
+		}
+		defer f.Close()
+
+		metadata, err := tag.ReadFrom(f)
+		if err != nil {
+			return nil
+		}
+
+		// create a key for map
+		artistKey := metadata.Artist()
+
+		currentMusic := music{
+			title:  metadata.Title(),
+			artist: metadata.Artist(),
+			path:   path,
+		}
+
+		// check if the artist already exists in map
+		if existingArtist, ok := artistsMap[artistKey]; ok {
+			existingArtist.tracks = append(existingArtist.tracks, currentMusic)
+			artistsMap[artistKey] = existingArtist
+		} else {
+			newArtist := artist{
+				name:   metadata.Artist(),
+				tracks: []music{currentMusic},
+			}
+			artistsMap[artistKey] = newArtist
+		}
+
+		return nil
+	})
+
+	// convert the map values into a slice of artists
+	var artists []artist
+	for _, artist := range artistsMap {
+		artists = append(artists, artist)
+	}
+
+	return artistsMsg{artists}
 }
 
 func playMusic(m music) tea.Msg {

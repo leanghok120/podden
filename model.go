@@ -14,7 +14,8 @@ type model struct {
 	width       int
 	height      int
 	loaded      bool
-	showAlbums  bool
+	showAlbums  bool // for albums page
+	showArtists bool // for artists page
 	playing     bool
 	paused      bool
 	currPlaying music
@@ -40,20 +41,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "enter":
 				// handle album selection
 				if m.showAlbums {
-					if selected, ok := m.list.SelectedItem().(album); ok {
-						items := make([]list.Item, len(selected.tracks))
-						for i, track := range selected.tracks {
-							items[i] = track
-						}
-						m.list.SetItems(items)
-						m.list.Title = selected.title
-						m.showAlbums = false
-						m.loaded = true
-						m.list.SetFilterState(list.Unfiltered)
-						return m, nil
-					}
+					m = m.handleAlbumSelection()
+					return m, nil
 				}
-
+				// handle artist selection
+				if m.showArtists {
+					m = m.handleArtistSelection()
+					return m, nil
+				}
 				// handle song selection and playback
 				if selected, ok := m.list.SelectedItem().(music); ok {
 					return m, func() tea.Msg { return playMusic(selected) }
@@ -81,14 +76,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "s":
 				m.playing = false
 				m.showAlbums = false
+				m.showArtists = false
 
 				return m, func() tea.Msg { return fetchMusics() }
 
 			case "a":
 				m.playing = false
 				m.loaded = false
+				m.showArtists = false
 
 				return m, func() tea.Msg { return fetchAlbums() }
+
+			case "d":
+				m.playing = false
+				m.loaded = false
+				m.showAlbums = false
+
+				return m, func() tea.Msg { return fetchArtists() }
 			}
 		}
 
@@ -105,14 +109,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case albumsMsg:
 		items := make([]list.Item, len(msg.albums))
-		for i, m := range msg.albums {
-			items[i] = m
+		for i, a := range msg.albums {
+			items[i] = a
 		}
 		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
 		l.Title = "Albums"
 
 		m.list = l
 		m.showAlbums = true
+
+	case artistsMsg:
+		items := make([]list.Item, len(msg.artists))
+		for i, a := range msg.artists {
+			items[i] = a
+		}
+		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l.Title = "Artists"
+
+		m.list = l
+		m.showArtists = true
 
 	case playingMsg:
 		m.loaded = false
@@ -126,7 +141,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	if m.loaded || m.showAlbums {
+	if m.loaded || m.showAlbums || m.showArtists {
 		var cmd tea.Cmd
 		m.list, cmd = m.list.Update(msg)
 		m.list.SetShowHelp(false)
@@ -150,5 +165,8 @@ func (m model) View() string {
 	if m.showAlbums {
 		return m.center(screenStyle.Render(currList))
 	}
-	return m.center(screenStyle.Render("loading music..."))
+	if m.showArtists {
+		return m.center(screenStyle.Render(currList))
+	}
+	return m.center(screenStyle.Render("loading..."))
 }

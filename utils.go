@@ -29,12 +29,12 @@ var (
 
 )
 
+// helper functions
 // place content in the center
 func (m model) center(content string) string {
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
 }
 
-// helper functions
 // play next song
 func (m model) nextSong(l list.Model) (list.Model, tea.Cmd) {
 	l.CursorDown()
@@ -53,4 +53,36 @@ func (m model) prevSong(l list.Model) (list.Model, tea.Cmd) {
 		return l, nil
 	}
 	return l, func() tea.Msg { return playMusic(selected) }
+}
+
+// handle album selection in list
+func (m model) handleAlbumSelection() model {
+	if selected, ok := m.list.SelectedItem().(album); ok {
+		items := make([]list.Item, len(selected.tracks))
+		for i, track := range selected.tracks {
+			items[i] = track
+		}
+		m.list.SetItems(items)
+		m.list.Title = selected.title
+		m.showAlbums = false
+		m.loaded = true
+		m.list.SetFilterState(list.Unfiltered)
+	}
+	return m
+}
+
+// handle artist selection in list
+func (m model) handleArtistSelection() model {
+	if selected, ok := m.list.SelectedItem().(artist); ok {
+		items := make([]list.Item, len(selected.tracks))
+		for i, track := range selected.tracks {
+			items[i] = track
+		}
+		m.list.SetItems(items)
+		m.list.Title = selected.name
+		m.showArtists = false
+		m.loaded = true
+		m.list.SetFilterState(list.Unfiltered)
+	}
+	return m
 }
