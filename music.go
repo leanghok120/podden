@@ -81,6 +81,8 @@ func playMusic(m music) tea.Msg {
 		return errMsg{err}
 	}
 
+	speaker.Clear()
+
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
 	finishedMsgChan := make(chan tea.Msg, 1)
