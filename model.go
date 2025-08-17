@@ -100,6 +100,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.showAlbums = false
 
 				return m, func() tea.Msg { return fetchArtists() }
+
+			case "f":
+				m.playing = true
+				m.loaded = false
+				m.showArtists = false
+				m.showAlbums = false
 			}
 		}
 
