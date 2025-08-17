@@ -15,4 +15,5 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [x] add lyrics 
 - [ ] fast forward songs
 - [ ] fix other language messing up the layout
+- [ ] add a help menu
 - [ ] add cover image
