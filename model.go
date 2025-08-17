@@ -32,61 +32,64 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "q", "ctrl+c":
-			return m, tea.Quit
+		if m.list.FilterState() != list.Filtering {
+			switch msg.String() {
+			case "q", "ctrl+c":
+				return m, tea.Quit
 
-		case "enter":
-			// handle album selection
-			if m.showAlbums {
-				if selected, ok := m.list.SelectedItem().(album); ok {
-					items := make([]list.Item, len(selected.tracks))
-					for i, track := range selected.tracks {
-						items[i] = track
+			case "enter":
+				// handle album selection
+				if m.showAlbums {
+					if selected, ok := m.list.SelectedItem().(album); ok {
+						items := make([]list.Item, len(selected.tracks))
+						for i, track := range selected.tracks {
+							items[i] = track
+						}
+						m.list.SetItems(items)
+						m.list.Title = selected.title
+						m.showAlbums = false
+						m.loaded = true
+						m.list.SetFilterState(list.Unfiltered)
+						return m, nil
 					}
-					m.list.SetItems(items)
-					m.list.Title = selected.title
-					m.showAlbums = false
-					m.loaded = true
-					return m, nil
 				}
+
+				// handle song selection and playback
+				if selected, ok := m.list.SelectedItem().(music); ok {
+					return m, func() tea.Msg { return playMusic(selected) }
+				}
+
+			case " ":
+				if m.paused {
+					speaker.Unlock()
+					m.paused = false
+				} else {
+					speaker.Lock()
+					m.paused = true
+				}
+
+			case "n":
+				var cmd tea.Cmd
+				m.list, cmd = m.nextSong(m.list)
+				return m, cmd
+
+			case "p":
+				var cmd tea.Cmd
+				m.list, cmd = m.prevSong(m.list)
+				return m, cmd
+
+			case "s":
+				m.playing = false
+				m.showAlbums = false
+
+				return m, func() tea.Msg { return fetchMusics() }
+
+			case "a":
+				m.playing = false
+				m.loaded = false
+
+				return m, func() tea.Msg { return fetchAlbums() }
 			}
-
-			// handle song selection and playback
-			if selected, ok := m.list.SelectedItem().(music); ok {
-				return m, func() tea.Msg { return playMusic(selected) }
-			}
-
-		case " ":
-			if m.paused {
-				speaker.Unlock()
-				m.paused = false
-			} else {
-				speaker.Lock()
-				m.paused = true
-			}
-
-		case "n":
-			var cmd tea.Cmd
-			m.list, cmd = m.nextSong(m.list)
-			return m, cmd
-
-		case "p":
-			var cmd tea.Cmd
-			m.list, cmd = m.prevSong(m.list)
-			return m, cmd
-
-		case "s":
-			m.playing = false
-			m.showAlbums = false
-
-			return m, func() tea.Msg { return fetchMusics() }
-
-		case "a":
-			m.playing = false
-			m.loaded = false
-
-			return m, func() tea.Msg { return fetchAlbums() }
 		}
 
 	case musicsMsg:
