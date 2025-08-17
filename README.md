@@ -13,7 +13,7 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [x] add artists page
 - [x] show elapsed time / total time
 - [x] add lyrics 
-- [ ] fast forward songs
+- [x] fast forward/rewind songs
 - [ ] allow user to choose their own music folder
 - [ ] fix other language messing up the layout
 - [ ] add a help menu

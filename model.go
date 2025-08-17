@@ -70,6 +70,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.paused = true
 				}
 
+			case ">", "right":
+				samplesToJump := m.sampleRate.N(5 * time.Second)
+				m.streamer.Seek(m.sampleRate.N(m.elapsed) + samplesToJump)
+
+			case "<", "left":
+				samplesToJump := m.sampleRate.N(5 * time.Second)
+				newPos := m.sampleRate.N(m.elapsed) - samplesToJump
+				if newPos < 0 {
+					newPos = 0
+				}
+				m.streamer.Seek(newPos)
+
 			case "n":
 				var cmd tea.Cmd
 				m.list, cmd = m.nextSong(m.list)
