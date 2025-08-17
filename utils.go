@@ -29,13 +29,17 @@ var (
 			Foreground(lipgloss.Color("230")).
 			Padding(0, 1)
 
-	// bratStyle := lipgloss.NewStyle().
-	// 	Padding(1, 2).
-	// 	Width(32).
-	// 	MaxWidth(35).
-	// 	Height(16).
-	// 	Background(lipgloss.Color("#ffffff"))
+	artistStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("243")) // muted gray
 
+	lyricStyle = lipgloss.NewStyle().
+			Width(26).
+			Align(lipgloss.Center).
+			Foreground(lipgloss.Color("252")).
+			Italic(true)
+
+	timeStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("240"))
 )
 
 // helper functions

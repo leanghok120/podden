@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gopxl/beep"
 	"github.com/gopxl/beep/speaker"
 )
@@ -135,7 +136,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list = l
 		m.showArtists = true
 
-	// reset lyrics and state when a new song starts
 	case playingMsg:
 		m.loaded = false
 		m.playing = true
@@ -148,7 +148,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.elapsed = 0
 		m.total = 0
 
-	// main lyric synchronization logic
 	case progressMsg:
 		m.elapsed = msg.elapsed
 		m.total = msg.total
@@ -186,28 +185,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	// strings
-	currList := m.list.View()
-	playing := fmt.Sprintf(
-		"%s\n\n%s\n\n%s / %s\n\n%s\n",
-		titleStyle.Render(m.currPlaying.title),
-		m.currPlaying.artist,
-		m.elapsed,
-		m.total,
-		m.currLyric,
-	)
-
-	if m.loaded {
-		return m.center(screenStyle.Render(currList))
-	}
 	if m.playing {
-		return m.center(screenStyle.Render(playing))
+		title := titleStyle.Render(m.currPlaying.title)
+		artist := artistStyle.Render(m.currPlaying.artist)
+
+		timeInfo := timeStyle.Render(fmt.Sprintf("%s / %s", m.elapsed, m.total))
+		lyric := lyricStyle.Render(m.currLyric)
+
+		playingContent := lipgloss.JoinVertical(
+			lipgloss.Left,
+			title,
+			artist,
+			"",
+			timeInfo,
+			"",
+			"",
+			lyric,
+		)
+
+		return m.center(screenStyle.Render(playingContent))
 	}
-	if m.showAlbums {
-		return m.center(screenStyle.Render(currList))
+
+	if m.loaded || m.showAlbums || m.showArtists {
+		return m.center(screenStyle.Render(m.list.View()))
 	}
-	if m.showArtists {
-		return m.center(screenStyle.Render(currList))
-	}
+
 	return m.center(screenStyle.Render("loading..."))
 }
