@@ -15,6 +15,7 @@ type model struct {
 	width       int
 	height      int
 	loaded      bool
+	showAlbums  bool
 	playing     bool
 	paused      bool
 	currPlaying music
@@ -72,7 +73,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "s":
 			m.playing = false
-			m.loaded = true
+			m.showAlbums = false
+
+			return m, func() tea.Msg { return fetchMusics() }
+
+		case "a":
+			m.playing = false
+			m.loaded = false
+
+			return m, func() tea.Msg { return fetchAlbums() }
 		}
 
 	case musicsMsg:
@@ -86,6 +95,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list = l
 		m.loaded = true
 
+	case albumsMsg:
+		items := make([]list.Item, len(msg.albums))
+		for i, m := range msg.albums {
+			items[i] = m
+		}
+		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l.Title = "Albums"
+
+		m.list = l
+		m.showAlbums = true
+
 	case playingMsg:
 		m.loaded = false
 		m.playing = true
@@ -98,7 +118,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	if m.loaded {
+	if m.loaded || m.showAlbums {
 		var cmd tea.Cmd
 		m.list, cmd = m.list.Update(msg)
 		m.list.SetShowHelp(false)
@@ -110,14 +130,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	// strings
-	songs := m.list.View()
+	currList := m.list.View()
 	playing := fmt.Sprintf("%s\n\n%s\n", titleStyle.Render(m.currPlaying.title), m.currPlaying.artist)
 
 	if m.loaded {
-		return m.center(screenStyle.Render(songs))
+		return m.center(screenStyle.Render(currList))
 	}
 	if m.playing {
 		return m.center(screenStyle.Render(playing))
+	}
+	if m.showAlbums {
+		return m.center(screenStyle.Render(currList))
 	}
 	return m.center(screenStyle.Render("loading music..."))
 }
