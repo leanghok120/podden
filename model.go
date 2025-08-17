@@ -161,7 +161,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.streamer = msg.streamer
 		m.sampleRate = msg.sampleRate
 		m.lyrics = nil // Reset lyrics for the new song
-		m.currLyric = "..."
+		m.currLyric = "♪"
 		m.paused = false
 		m.elapsed = 0
 		m.total = 0
