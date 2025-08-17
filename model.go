@@ -37,19 +37,33 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
+			// handle album selection
+			if m.showAlbums {
+				if selected, ok := m.list.SelectedItem().(album); ok {
+					items := make([]list.Item, len(selected.tracks))
+					for i, track := range selected.tracks {
+						items[i] = track
+					}
+					m.list.SetItems(items)
+					m.list.Title = selected.title
+					m.showAlbums = false
+					m.loaded = true
+					return m, nil
+				}
+			}
+
+			// handle song selection and playback
 			if selected, ok := m.list.SelectedItem().(music); ok {
 				return m, func() tea.Msg { return playMusic(selected) }
 			}
 
 		case " ":
-			if m.playing {
-				if m.paused {
-					speaker.Unlock()
-					m.paused = false
-				} else {
-					speaker.Lock()
-					m.paused = true
-				}
+			if m.paused {
+				speaker.Unlock()
+				m.paused = false
+			} else {
+				speaker.Lock()
+				m.paused = true
 			}
 
 		case "n":
