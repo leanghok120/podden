@@ -84,8 +84,15 @@ func tickCmd(streamer beep.StreamSeekCloser, sr beep.SampleRate) tea.Cmd {
 
 func fetchMusics() tea.Msg {
 	var musics []music
-	homeDir, _ := os.UserHomeDir()
-	dir := filepath.Join(homeDir, "Music")
+	var dir string
+
+	// use default music dir
+	if *musicDirFlag == "" {
+		homeDir, _ := os.UserHomeDir()
+		dir = filepath.Join(homeDir, "Music")
+	} else {
+		dir = *musicDirFlag
+	}
 
 	filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
