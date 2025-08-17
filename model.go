@@ -173,8 +173,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for _, l := range m.lyrics {
 			if m.elapsed.Seconds() >= l.Time {
 				m.currLyric = l.Text
-			} else if l.Text == "" {
-				m.currLyric = "♪"
 			} else {
 				break
 			}
