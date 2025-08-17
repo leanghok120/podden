@@ -1,10 +1,19 @@
 package main
 
 import (
+	"regexp"
+	"strconv"
+	"strings"
+
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
+
+type lyricLine struct {
+	Time float64
+	Text string
+}
 
 // styles
 var (
@@ -85,4 +94,25 @@ func (m model) handleArtistSelection() model {
 		m.list.SetFilterState(list.Unfiltered)
 	}
 	return m
+}
+
+func parseLRC(raw string) ([]lyricLine, error) {
+	var lyrics []lyricLine
+
+	// regex to match [mm:ss.xx]
+	re := regexp.MustCompile(`\[(\d+):(\d+\.\d+)\](.*)`)
+
+	lines := strings.Split(raw, "\n")
+	for _, line := range lines {
+		matches := re.FindStringSubmatch(line)
+		if len(matches) == 4 {
+			minutes, _ := strconv.Atoi(matches[1])
+			seconds, _ := strconv.ParseFloat(matches[2], 64)
+			text := strings.TrimSpace(matches[3])
+			totalTime := float64(minutes)*60 + seconds
+			lyrics = append(lyrics, lyricLine{Time: totalTime, Text: text})
+		}
+	}
+
+	return lyrics, nil
 }

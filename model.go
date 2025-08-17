@@ -19,6 +19,8 @@ type model struct {
 	showArtists bool // for artists page
 	playing     bool
 	paused      bool
+	lyrics      []lyricLine
+	currLyric   string
 	elapsed     time.Duration
 	total       time.Duration
 	currPlaying music
@@ -133,17 +135,39 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list = l
 		m.showArtists = true
 
+	// reset lyrics and state when a new song starts
 	case playingMsg:
 		m.loaded = false
 		m.playing = true
 		m.currPlaying = msg.music
 		m.streamer = msg.streamer
 		m.sampleRate = msg.sampleRate
+		m.lyrics = nil // Reset lyrics for the new song
+		m.currLyric = "..."
+		m.paused = false
+		m.elapsed = 0
+		m.total = 0
 
+	// main lyric synchronization logic
 	case progressMsg:
 		m.elapsed = msg.elapsed
 		m.total = msg.total
+
+		for _, l := range m.lyrics {
+			if m.elapsed.Seconds() >= l.Time {
+				m.currLyric = l.Text
+			} else {
+				break
+			}
+		}
+
 		return m, tickCmd(m.streamer, m.sampleRate)
+
+	case lyricsMsg:
+		m.lyrics = msg.lyrics
+		if len(m.lyrics) > 0 && m.lyrics[0].Time > 0 {
+			m.currLyric = "♪"
+		}
 
 	case finishedMsg:
 		var cmd tea.Cmd
@@ -165,11 +189,12 @@ func (m model) View() string {
 	// strings
 	currList := m.list.View()
 	playing := fmt.Sprintf(
-		"%s\n\n%s\n\n%s / %s\n",
+		"%s\n\n%s\n\n%s / %s\n\n%s\n",
 		titleStyle.Render(m.currPlaying.title),
 		m.currPlaying.artist,
 		m.elapsed,
 		m.total,
+		m.currLyric,
 	)
 
 	if m.loaded {

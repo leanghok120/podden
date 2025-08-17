@@ -1,7 +1,12 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"io/fs"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -35,6 +40,7 @@ type (
 	musicsMsg   struct{ musics []music }
 	albumsMsg   struct{ albums []album }
 	artistsMsg  struct{ artists []artist }
+	lyricsMsg   struct{ lyrics []lyricLine }
 	finishedMsg struct{}
 )
 
@@ -47,6 +53,10 @@ type playingMsg struct {
 	music      music
 	streamer   beep.StreamSeekCloser
 	sampleRate beep.SampleRate
+}
+
+type lrcLibResponse struct {
+	SyncedLyrics string `json:"syncedLyrics"`
 }
 
 // list.Item implementation
@@ -257,6 +267,49 @@ func playMusic(m music) tea.Msg {
 	return tea.Batch(
 		func() tea.Msg { return playingMsg{music: m, streamer: streamer, sampleRate: format.SampleRate} },
 		func() tea.Msg { return <-finishedMsgChan },
+		func() tea.Msg { return fetchLyrics(m.title, m.artist) },
 		tickCmd(streamer, format.SampleRate),
 	)()
+}
+
+func fetchLyrics(title, artist string) tea.Msg {
+	if title == "" || artist == "" {
+		return lyricsMsg{[]lyricLine{{Text: "Missing info to fetch lyrics."}}}
+	}
+	encodedTitle := url.QueryEscape(title)
+	encodedArtist := url.QueryEscape(artist)
+
+	apiURL := fmt.Sprintf("https://lrclib.net/api/get?track_name=%s&artist_name=%s", encodedTitle, encodedArtist)
+
+	resp, err := http.Get(apiURL)
+	if err != nil {
+		return lyricsMsg{[]lyricLine{{Text: "Failed to fetch lyrics."}}}
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return lyricsMsg{[]lyricLine{{Text: "No lyrics found for this song."}}}
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return lyricsMsg{[]lyricLine{{Text: "Failed to read lyrics response."}}}
+	}
+
+	var lrcResponse lrcLibResponse
+	if err := json.Unmarshal(body, &lrcResponse); err != nil {
+		return lyricsMsg{[]lyricLine{{Text: "Failed to parse lyrics response."}}}
+	}
+
+	// check if synced lyrics are available
+	if lrcResponse.SyncedLyrics == "" {
+		return lyricsMsg{[]lyricLine{{Text: "No synced lyrics available."}}}
+	}
+
+	lyrics, err := parseLRC(lrcResponse.SyncedLyrics)
+	if err != nil {
+		return lyricsMsg{[]lyricLine{{Text: "Error parsing LRC lyrics."}}}
+	}
+
+	return lyricsMsg{lyrics}
 }
