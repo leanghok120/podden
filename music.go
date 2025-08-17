@@ -38,9 +38,15 @@ type (
 	finishedMsg struct{}
 )
 
+type progressMsg struct {
+	elapsed time.Duration
+	total   time.Duration
+}
+
 type playingMsg struct {
-	music    music
-	streamer beep.StreamSeekCloser
+	music      music
+	streamer   beep.StreamSeekCloser
+	sampleRate beep.SampleRate
 }
 
 // list.Item implementation
@@ -55,6 +61,16 @@ func (a album) FilterValue() string { return a.title }
 func (a artist) Title() string       { return a.name }
 func (a artist) Description() string { return "" }
 func (a artist) FilterValue() string { return a.name }
+
+func tickCmd(streamer beep.StreamSeekCloser, sr beep.SampleRate) tea.Cmd {
+	return tea.Tick(time.Second, func(time.Time) tea.Msg {
+		speaker.Lock()
+		elapsed := sr.D(streamer.Position()).Round(time.Second)
+		total := sr.D(streamer.Len()).Round(time.Second)
+		speaker.Unlock()
+		return progressMsg{elapsed, total}
+	})
+}
 
 func fetchMusics() tea.Msg {
 	var musics []music
@@ -239,7 +255,8 @@ func playMusic(m music) tea.Msg {
 	}()
 
 	return tea.Batch(
-		func() tea.Msg { return playingMsg{music: m, streamer: streamer} },
+		func() tea.Msg { return playingMsg{music: m, streamer: streamer, sampleRate: format.SampleRate} },
 		func() tea.Msg { return <-finishedMsgChan },
+		tickCmd(streamer, format.SampleRate),
 	)()
 }

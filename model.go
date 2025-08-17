@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -18,8 +19,11 @@ type model struct {
 	showArtists bool // for artists page
 	playing     bool
 	paused      bool
+	elapsed     time.Duration
+	total       time.Duration
 	currPlaying music
 	streamer    beep.StreamSeekCloser
+	sampleRate  beep.SampleRate
 }
 
 func (m model) Init() tea.Cmd {
@@ -134,6 +138,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.playing = true
 		m.currPlaying = msg.music
 		m.streamer = msg.streamer
+		m.sampleRate = msg.sampleRate
+
+	case progressMsg:
+		m.elapsed = msg.elapsed
+		m.total = msg.total
+		return m, tickCmd(m.streamer, m.sampleRate)
 
 	case finishedMsg:
 		var cmd tea.Cmd
@@ -154,7 +164,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	// strings
 	currList := m.list.View()
-	playing := fmt.Sprintf("%s\n\n%s\n", titleStyle.Render(m.currPlaying.title), m.currPlaying.artist)
+	playing := fmt.Sprintf(
+		"%s\n\n%s\n\n%s / %s\n",
+		titleStyle.Render(m.currPlaying.title),
+		m.currPlaying.artist,
+		m.elapsed,
+		m.total,
+	)
 
 	if m.loaded {
 		return m.center(screenStyle.Render(currList))
