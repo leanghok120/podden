@@ -40,6 +40,7 @@ podden -m path
 
 - Podden is still in very early stages.
 - By default, it looks for music in the ~/Music directory. (Use -m to change to your own music directory)
+- For now plays only `.mp3`, `.flac`, `.m4a` files.
 
 ## 🗒️ Todos
 
