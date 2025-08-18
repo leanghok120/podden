@@ -1,10 +1,47 @@
 # podden
 
-a minimal tui music player written in Go with bubbletea
+A minimal **TUI MP3 player** written in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) and [beep](https://github.com/gopxl/beep).  
 
-podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki/IPod_Classic)
+Inspired by the **iPod Classic (5th Gen)**.
 
-## todos
+## ✨ Features
+
+- **Songs view:** Browse and play songs from your music folder.  
+- **Albums view:** Browse albums.  
+- **Artists view:** Browse artists.  
+- **Playing view:** Show currently playing song details.
+- **Playback Controls:** Pause, next, previous, fast forward, rewind.  
+- **Lyrics:** Synchronized song lyrics.
+
+## 📦 Installation
+
+Make sure you have [Go](https://go.dev/dl/) installed (version 1.21+ recommended).  
+Then run:
+
+```sh
+go install github.com/leanghok120/podden@latest
+```
+
+## 🚀 Usage
+
+After installing, simply run:
+
+```sh
+podden
+```
+
+If you want to use your own music driectory:
+
+```sh
+podden -m path
+```
+
+### Notes
+
+- Podden is still in very early stages.
+- By default, it looks for music in the ~/Music directory. (Use -m to change to your own music directory)
+
+## 🗒️ Todos
 
 - [x] play songs with beep
 - [x] pause, next, prev songs
@@ -19,3 +56,19 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [ ] add a help menu
 - [ ] highlight lyrics
 - [ ] add cover image
+
+## 🤝 Contributing
+
+Contributions are welcome as long as **they align with what the project's needs**!
+If you’d like to help improve podden, you can:
+
+1. Fork the repository
+2. Commit your changes
+3. Open a Pull Request
+
+## 🙏 Acknowledgements
+
+[Charmbracelet](https://github.com/charmbracelet) for the TUI libraries
+[gopxl](https://github.com/gopxl/beep) for the beep audio library
+[lrclib](https://lrclib.net) for the synchronized lyrics
+The iPod Classic (5th Gen) — for inspiring the look & feel
