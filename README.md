@@ -15,7 +15,7 @@ podden is inspired by the [IPod Classic (5th gen)](https://en.wikipedia.org/wiki
 - [x] add lyrics 
 - [x] fast forward/rewind songs
 - [x] allow user to choose their own music folder
-- [ ] highlight lyrics
-- [ ] add a help menu
 - [ ] add config
+- [ ] add a help menu
+- [ ] highlight lyrics
 - [ ] add cover image
