@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -116,7 +117,21 @@ func fetchMusics() tea.Msg {
 			return nil
 		}
 
-		musics = append(musics, music{title: metadata.Title(), artist: metadata.Artist(), path: path})
+		title := metadata.Title()
+		if title == "" {
+			title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+		}
+
+		artist := metadata.Artist()
+		if artist == "" {
+			artist = "Unknown Artist"
+		}
+
+		musics = append(musics, music{
+			title:  title,
+			artist: artist,
+			path:   path,
+		})
 		return nil
 	})
 
