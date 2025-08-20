@@ -26,7 +26,7 @@ var (
 
 	titleStyle = lipgloss.NewStyle().
 			Background(lipgloss.Color("62")).
-			Foreground(lipgloss.Color("230")).
+			Foreground(lipgloss.Color(cfg.TitleForeground)).
 			Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
