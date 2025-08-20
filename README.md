@@ -40,6 +40,7 @@ podden -m path
 
 - Podden is still in very early stages.
 - By default, it looks for music in the ~/Music directory. (Use -m to change to your own music directory)
+- For now plays only `.mp3`, `.flac`, `.m4a` files.
 
 ## 🗒️ Todos
 
@@ -68,7 +69,7 @@ If you’d like to help improve podden, you can:
 
 ## 🙏 Acknowledgements
 
-[Charmbracelet](https://github.com/charmbracelet) for the TUI libraries
-[gopxl](https://github.com/gopxl/beep) for the beep audio library
-[lrclib](https://lrclib.net) for the synchronized lyrics
-The iPod Classic (5th Gen) — for inspiring the look & feel
+- [Charmbracelet](https://github.com/charmbracelet) for the TUI libraries
+- [gopxl](https://github.com/gopxl/beep) for the beep audio library
+- [lrclib](https://lrclib.net) for the synchronized lyrics
+- The iPod Classic (5th Gen) — for inspiring the look & feel
