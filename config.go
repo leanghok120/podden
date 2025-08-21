@@ -10,6 +10,7 @@ import (
 
 type config struct {
 	TitleForeground string `yaml:"title_foreground"`
+	TitleBackground string `yaml:"title_background"`
 }
 
 func loadConfig(cfg *config) {

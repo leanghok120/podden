@@ -35,7 +35,7 @@ func initStyles() {
 
 	titleStyle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color(cfg.TitleForeground)).
-		Background(lipgloss.Color("62")).
+		Background(lipgloss.Color(cfg.TitleBackground)).
 		Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
@@ -49,6 +49,17 @@ func initStyles() {
 
 	timeStyle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("240"))
+}
+
+// update the styles of bubbles component
+func setCustomBubblesStyle() list.Styles {
+	styles := list.DefaultStyles()
+
+	styles.Title = lipgloss.NewStyle().
+		Background(lipgloss.Color(cfg.TitleBackground)).
+		Foreground(lipgloss.Color(cfg.TitleForeground))
+
+	return styles
 }
 
 // helper functions
