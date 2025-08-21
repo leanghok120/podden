@@ -212,7 +212,6 @@ func (m model) View() string {
 
 		playingContent := lipgloss.JoinVertical(
 			lipgloss.Left,
-			cfg.TitleForeground,
 			title,
 			artist,
 			"",

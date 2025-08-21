@@ -17,30 +17,39 @@ type lyricLine struct {
 
 // styles
 var (
+	screenStyle          lipgloss.Style
+	titleStyle           lipgloss.Style
+	titleBackgroundStyle lipgloss.Style
+	artistStyle          lipgloss.Style
+	lyricStyle           lipgloss.Style
+	timeStyle            lipgloss.Style
+)
+
+func initStyles() {
 	screenStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			Padding(1, 2).
-			Width(30).
-			MaxWidth(35).
-			Height(14)
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Width(30).
+		MaxWidth(35).
+		Height(14)
 
 	titleStyle = lipgloss.NewStyle().
-			Background(lipgloss.Color("62")).
-			Foreground(lipgloss.Color(cfg.TitleForeground)).
-			Padding(0, 1)
+		Foreground(lipgloss.Color(cfg.TitleForeground)).
+		Background(lipgloss.Color("62")).
+		Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("243")) // muted gray
+		Foreground(lipgloss.Color("243")) // muted gray
 
 	lyricStyle = lipgloss.NewStyle().
-			Width(26).
-			Align(lipgloss.Center).
-			Foreground(lipgloss.Color("252")).
-			Italic(true)
+		Width(26).
+		Align(lipgloss.Center).
+		Foreground(lipgloss.Color("252")).
+		Italic(true)
 
 	timeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("240"))
-)
+		Foreground(lipgloss.Color("240"))
+}
 
 // helper functions
 // place content in the center

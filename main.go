@@ -16,6 +16,7 @@ var (
 func main() {
 	flag.Parse()
 	loadConfig(&cfg)
+	initStyles()
 
 	p := tea.NewProgram(model{loaded: false, playing: false, paused: false}, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
