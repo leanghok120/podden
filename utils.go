@@ -25,6 +25,13 @@ var (
 	timeStyle            lipgloss.Style
 )
 
+func fallbackColor(value, def string) lipgloss.Color {
+	if value == "" {
+		return lipgloss.Color(def)
+	}
+	return lipgloss.Color(value)
+}
+
 func initStyles() {
 	screenStyle = lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -34,8 +41,8 @@ func initStyles() {
 		Height(14)
 
 	titleStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(cfg.TitleForeground)).
-		Background(lipgloss.Color(cfg.TitleBackground)).
+		Foreground(fallbackColor(cfg.TitleForeground, "230")).
+		Background(fallbackColor(cfg.TitleBackground, "62")).
 		Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
@@ -56,8 +63,9 @@ func setCustomBubblesStyle() list.Styles {
 	styles := list.DefaultStyles()
 
 	styles.Title = lipgloss.NewStyle().
-		Background(lipgloss.Color(cfg.TitleBackground)).
-		Foreground(lipgloss.Color(cfg.TitleForeground))
+		Background(fallbackColor(cfg.TitleBackground, "62")).
+		Foreground(fallbackColor(cfg.TitleForeground, "230")).
+		Padding(0, 1)
 
 	return styles
 }
