@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -26,7 +27,7 @@ func loadConfig(cfg *config) {
 
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(cfg)
-	if err != nil {
+	if err != nil && err != io.EOF {
 		log.Fatal(err)
 	}
 }
