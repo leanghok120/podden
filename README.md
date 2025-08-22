@@ -36,6 +36,20 @@ If you want to use your own music driectory:
 podden -m path
 ```
 
+### Keybinds
+
+- kj or up down arrow keys to move through the list
+- enter to play or go to album/artist
+- space to pause/resume playing song
+- n to play next song
+- p to play previous song
+- left arrow to fast forward
+- right arrow to rewind
+- a to go to albums list
+- s to go to songs list
+- d to go to artists list
+- f to go to playing
+
 ### Notes
 
 - Podden is still in very early stages.
