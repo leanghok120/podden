@@ -53,7 +53,7 @@ podden -m path
 - [x] add lyrics 
 - [x] fast forward/rewind songs
 - [x] allow user to choose their own music folder
-- [ ] add config
+- [x] add config
 - [ ] add a help menu
 - [ ] highlight lyrics
 - [ ] add cover image
