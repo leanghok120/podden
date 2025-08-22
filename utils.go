@@ -32,6 +32,14 @@ func fallbackColor(value, def string) lipgloss.Color {
 	return lipgloss.Color(value)
 }
 
+// returns either lipgloss.Color or lipgloss.AdaptiveColor
+func fallbackAdaptiveColor(value string, def lipgloss.AdaptiveColor) lipgloss.TerminalColor {
+	if value == "" {
+		return def
+	}
+	return lipgloss.Color(value)
+}
+
 func initStyles() {
 	screenStyle = lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -41,8 +49,8 @@ func initStyles() {
 		Height(14)
 
 	titleStyle = lipgloss.NewStyle().
-		Foreground(fallbackColor(cfg.TitleForeground, "230")).
-		Background(fallbackColor(cfg.TitleBackground, "62")).
+		Foreground(fallbackColor(cfg.HeadingForeground, "230")).
+		Background(fallbackColor(cfg.HeadingBackground, "62")).
 		Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
@@ -63,11 +71,48 @@ func setCustomBubblesStyle() list.Styles {
 	styles := list.DefaultStyles()
 
 	styles.Title = lipgloss.NewStyle().
-		Background(fallbackColor(cfg.TitleBackground, "62")).
-		Foreground(fallbackColor(cfg.TitleForeground, "230")).
+		Background(fallbackColor(cfg.HeadingBackground, "62")).
+		Foreground(fallbackColor(cfg.HeadingForeground, "230")).
 		Padding(0, 1)
 
 	return styles
+}
+
+func customDelegate() list.ItemDelegate {
+	delegate := list.NewDefaultDelegate()
+	s := &delegate.Styles
+
+	s.NormalTitle = lipgloss.NewStyle().
+		Foreground(fallbackAdaptiveColor(cfg.NormalTitleForeground,
+					lipgloss.AdaptiveColor{Light: "#1a1a1a", Dark: "#dddddd"})).
+		Padding(0, 0, 0, 2) //nolint:mnd
+
+	s.NormalDesc = s.NormalTitle.
+		Foreground(fallbackAdaptiveColor(cfg.NormalDescForeground,
+			lipgloss.AdaptiveColor{Light: "#A49FA5", Dark: "#777777"}))
+
+	s.SelectedTitle = lipgloss.NewStyle().
+		Border(lipgloss.NormalBorder(), false, false, false, true).
+		BorderForeground(fallbackAdaptiveColor(cfg.SelectedTitleBorderForeground,
+			lipgloss.AdaptiveColor{Light: "#F793FF", Dark: "#AD58B4"})).
+		Foreground(fallbackAdaptiveColor(cfg.SelectedTitleForeground,
+			lipgloss.AdaptiveColor{Light: "#EE6FF8", Dark: "#EE6FF8"})).
+		Padding(0, 0, 0, 1)
+
+	s.SelectedDesc = s.SelectedTitle.
+		Foreground(fallbackAdaptiveColor(cfg.SelectedDescForeground,
+			lipgloss.AdaptiveColor{Light: "#F793FF", Dark: "#AD58B4"}))
+
+	s.DimmedTitle = lipgloss.NewStyle().
+		Foreground(fallbackAdaptiveColor(cfg.DimmedTitleForeground,
+					lipgloss.AdaptiveColor{Light: "#A49FA5", Dark: "#777777"})).
+		Padding(0, 0, 0, 2) //nolint:mnd
+
+	s.DimmedDesc = s.DimmedTitle.
+		Foreground(fallbackAdaptiveColor(cfg.DimmedDescForeground,
+			lipgloss.AdaptiveColor{Light: "#C2B8C2", Dark: "#4D4D4D"}))
+
+	return delegate
 }
 
 // helper functions

@@ -126,7 +126,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for i, m := range msg.musics {
 			items[i] = m
 		}
-		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l := list.New(items, customDelegate(), 30, 10)
 		l.Title = "Songs"
 		l.Styles = setCustomBubblesStyle()
 
@@ -138,7 +138,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for i, a := range msg.albums {
 			items[i] = a
 		}
-		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l := list.New(items, customDelegate(), 30, 10)
 		l.Title = "Albums"
 		l.Styles = setCustomBubblesStyle()
 
@@ -150,7 +150,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for i, a := range msg.artists {
 			items[i] = a
 		}
-		l := list.New(items, list.NewDefaultDelegate(), 30, 10)
+		l := list.New(items, customDelegate(), 30, 10)
 		l.Title = "Artists"
 		l.Styles = setCustomBubblesStyle()
 

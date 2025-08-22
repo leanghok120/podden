@@ -10,8 +10,15 @@ import (
 )
 
 type config struct {
-	TitleForeground string `yaml:"title_foreground"`
-	TitleBackground string `yaml:"title_background"`
+	HeadingForeground             string `yaml:"heading_foreground"`
+	HeadingBackground             string `yaml:"heading_background"`
+	NormalTitleForeground         string `yaml:"normal_title_foreground"`
+	NormalDescForeground          string `yaml:"normal_desc_foreground"`
+	SelectedTitleBorderForeground string `yaml:"selected_title_border_foreground"`
+	SelectedTitleForeground       string `yaml:"selected_title_foreground"`
+	SelectedDescForeground        string `yaml:"selected_desc_foreground"`
+	DimmedTitleForeground         string `yaml:"dimmed_title_foreground"`
+	DimmedDescForeground          string `yaml:"dimmed_desc_foreground"`
 }
 
 func loadConfig(cfg *config) {
