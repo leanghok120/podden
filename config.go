@@ -19,6 +19,9 @@ type config struct {
 	SelectedDescForeground        string `yaml:"selected_desc_foreground"`
 	DimmedTitleForeground         string `yaml:"dimmed_title_foreground"`
 	DimmedDescForeground          string `yaml:"dimmed_desc_foreground"`
+	ArtistForeground              string `yaml:"artist_foreground"`
+	TimeForeground                string `yaml:"time_foreground"`
+	LyricsForeground              string `yaml:"lyrics_foreground"`
 }
 
 func loadConfig(cfg *config) {

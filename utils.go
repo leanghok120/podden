@@ -54,16 +54,16 @@ func initStyles() {
 		Padding(0, 1)
 
 	artistStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("243")) // muted gray
+		Foreground(fallbackColor(cfg.ArtistForeground, "243")) // muted gray
 
 	lyricStyle = lipgloss.NewStyle().
 		Width(26).
 		Align(lipgloss.Center).
-		Foreground(lipgloss.Color("252")).
+		Foreground(fallbackColor(cfg.LyricsForeground, "252")).
 		Italic(true)
 
 	timeStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("240"))
+		Foreground(fallbackColor(cfg.TimeForeground, "240"))
 }
 
 // update the styles of bubbles component
