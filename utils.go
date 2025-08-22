@@ -43,6 +43,7 @@ func fallbackAdaptiveColor(value string, def lipgloss.AdaptiveColor) lipgloss.Te
 func initStyles() {
 	screenStyle = lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(cfg.BorderForeground)).
 		Padding(1, 2).
 		Width(30).
 		MaxWidth(35).

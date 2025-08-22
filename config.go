@@ -12,6 +12,7 @@ import (
 type config struct {
 	HeadingForeground             string `yaml:"heading_foreground"`
 	HeadingBackground             string `yaml:"heading_background"`
+	BorderForeground              string `yaml:"border_foreground"`
 	NormalTitleForeground         string `yaml:"normal_title_foreground"`
 	NormalDescForeground          string `yaml:"normal_desc_foreground"`
 	SelectedTitleBorderForeground string `yaml:"selected_title_border_foreground"`
