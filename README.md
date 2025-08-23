@@ -12,7 +12,6 @@ Inspired by the **iPod Classic (5th Gen)**.
 - **Playing view:** Show currently playing song details.
 - **Playback Controls:** Pause, next, previous, fast forward, rewind.  
 - **Lyrics:** Synchronized song lyrics.
-
 ## 📦 Installation
 
 Make sure you have [Go](https://go.dev/dl/) installed (version 1.21+ recommended).  
@@ -68,7 +67,7 @@ podden -m path
 - [x] fast forward/rewind songs
 - [x] allow user to choose their own music folder
 - [x] add config
-- [ ] add a help menu
+- [x] add a help menu
 - [ ] highlight lyrics
 - [ ] add cover image
 
