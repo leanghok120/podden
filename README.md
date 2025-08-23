@@ -12,6 +12,8 @@ Inspired by the **iPod Classic (5th Gen)**.
 - **Playing view:** Show currently playing song details.
 - **Playback Controls:** Pause, next, previous, fast forward, rewind.  
 - **Lyrics:** Synchronized song lyrics.
+- **Configuration:** Customize podden to look how you want it to.
+
 ## 📦 Installation
 
 Make sure you have [Go](https://go.dev/dl/) installed (version 1.21+ recommended).  
@@ -39,7 +41,7 @@ podden -m path
 
 - Podden is still in very early stages.
 - By default, it looks for music in the ~/Music directory. (Use -m to change to your own music directory)
-- For now plays only `.mp3`, `.flac`, `.m4a` files.
+- Plays only `.mp3`, `.flac`, `.m4a` files.
 
 ## 🗒️ Todos
 
