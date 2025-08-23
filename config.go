@@ -25,13 +25,46 @@ type config struct {
 	LyricsForeground              string `yaml:"lyrics_foreground"`
 }
 
+var defaultConfigYaml = `# heading styles (album, songs, artists)
+heading_background: ""
+heading_foreground: ""
+border_foreground: ""
+
+# list styles
+normal_title_foreground: ""
+normal_desc_foreground: ""
+
+selected_title_border_foreground: ""
+selected_title_foreground: ""
+selected_desc_foreground: ""
+
+dimmed_title_foreground: ""
+dimmed_desc_foreground: ""
+
+# playing styles
+artist_foreground: ""
+time_foreground: ""
+lyrics_foreground: ""
+`
+
 func loadConfig(cfg *config) {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	f, err := os.Open(filepath.Join(configDir, "podden", "config.yml"))
+	configPath := filepath.Join(configDir, "podden", "config.yml")
+
+	// check if ~/.config/podden exists
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		os.MkdirAll(filepath.Dir(configPath), 0755)
+		err = os.WriteFile(configPath, []byte(defaultConfigYaml), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	f, err := os.Open(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
