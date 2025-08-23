@@ -124,7 +124,11 @@ func customDelegate() list.ItemDelegate {
 // place content in the center and add a help menu
 func (m model) center(content string) string {
 	screen := lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
-	return lipgloss.JoinVertical(lipgloss.Left, screen, helpMenu.Render(m.help.View(keys)))
+
+	if cfg.ShowHelp {
+		return lipgloss.JoinVertical(lipgloss.Left, screen, helpMenu.Render(m.help.View(keys)))
+	}
+	return screen
 }
 
 // play next song

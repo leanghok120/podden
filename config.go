@@ -23,6 +23,7 @@ type config struct {
 	ArtistForeground              string `yaml:"artist_foreground"`
 	TimeForeground                string `yaml:"time_foreground"`
 	LyricsForeground              string `yaml:"lyrics_foreground"`
+	ShowHelp                      bool   `yaml:"show_help"`
 }
 
 var defaultConfigYaml = `# heading styles (album, songs, artists)
@@ -45,6 +46,8 @@ dimmed_desc_foreground: ""
 artist_foreground: ""
 time_foreground: ""
 lyrics_foreground: ""
+
+show_help: true
 `
 
 func loadConfig(cfg *config) {
