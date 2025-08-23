@@ -23,6 +23,7 @@ var (
 	artistStyle          lipgloss.Style
 	lyricStyle           lipgloss.Style
 	timeStyle            lipgloss.Style
+	helpMenu             lipgloss.Style
 )
 
 func fallbackColor(value, def string) lipgloss.Color {
@@ -65,6 +66,9 @@ func initStyles() {
 
 	timeStyle = lipgloss.NewStyle().
 		Foreground(fallbackColor(cfg.TimeForeground, "240"))
+
+	helpMenu = lipgloss.NewStyle().
+		Padding(0, 1)
 }
 
 // update the styles of bubbles component
@@ -117,9 +121,10 @@ func customDelegate() list.ItemDelegate {
 }
 
 // helper functions
-// place content in the center
+// place content in the center and add a help menu
 func (m model) center(content string) string {
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
+	screen := lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
+	return lipgloss.JoinVertical(lipgloss.Left, screen, helpMenu.Render(m.help.View(keys)))
 }
 
 // play next song

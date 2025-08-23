@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -12,6 +13,7 @@ import (
 )
 
 type model struct {
+	help        help.Model
 	list        list.Model
 	width       int
 	height      int
@@ -29,6 +31,12 @@ type model struct {
 	sampleRate  beep.SampleRate
 }
 
+func initModel() model {
+	help := help.New()
+
+	return model{loaded: false, playing: false, paused: false, help: help}
+}
+
 func (m model) Init() tea.Cmd {
 	return fetchMusics
 }
@@ -44,6 +52,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case "q", "ctrl+c":
 				return m, tea.Quit
+
+			case "?":
+				m.help.ShowAll = !m.help.ShowAll
+				return m, nil
 
 			case "enter":
 				// handle album selection

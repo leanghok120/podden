@@ -18,7 +18,7 @@ func main() {
 	loadConfig(&cfg)
 	initStyles()
 
-	p := tea.NewProgram(model{loaded: false, playing: false, paused: false}, tea.WithAltScreen())
+	p := tea.NewProgram(initModel(), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
