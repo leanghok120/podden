@@ -1,5 +1,7 @@
 # podden
 
+![demo](./assets/demo.png)
+
 A minimal **TUI MP3 player** written in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) and [beep](https://github.com/gopxl/beep).  
 
 Inspired by the **iPod Classic (5th Gen)**.
