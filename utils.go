@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/0xAX/notificator"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -71,6 +74,7 @@ func initStyles() {
 		Padding(0, 1)
 }
 
+// helper functions
 // update the styles of bubbles component
 func setCustomBubblesStyle() list.Styles {
 	styles := list.DefaultStyles()
@@ -120,7 +124,6 @@ func customDelegate() list.ItemDelegate {
 	return delegate
 }
 
-// helper functions
 // place content in the center and add a help menu
 func (m model) center(content string) string {
 	screen := lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
@@ -202,4 +205,21 @@ func parseLRC(raw string) ([]lyricLine, error) {
 	}
 
 	return lyrics, nil
+}
+
+func sendNotification(m music, body string) {
+	f, err := os.CreateTemp("", "cover-image")
+	if err != nil {
+		return
+	}
+	defer os.Remove(f.Name())
+
+	_, err = f.Write(m.cover)
+	if err != nil {
+		return
+	}
+	f.Close()
+
+	notifyTitle := fmt.Sprintf("%s - %s", m.title, m.artist)
+	notify.Push(notifyTitle, body, f.Name(), notificator.UR_NORMAL)
 }

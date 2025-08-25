@@ -80,6 +80,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					speaker.Lock()
 					m.paused = true
+					sendNotification(m.currPlaying, "paused")
 				}
 
 			case ">", "right":

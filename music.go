@@ -23,6 +23,8 @@ type music struct {
 	title  string
 	artist string
 	path   string
+	album  string
+	cover  []byte
 }
 
 type album struct {
@@ -127,10 +129,15 @@ func fetchMusics() tea.Msg {
 			artist = "Unknown Artist"
 		}
 
+		album := metadata.Album()
+		cover := metadata.Picture().Data
+
 		musics = append(musics, music{
 			title:  title,
 			artist: artist,
 			path:   path,
+			album:  album,
+			cover:  cover,
 		})
 		return nil
 	})
@@ -285,6 +292,8 @@ func playMusic(m music) tea.Msg {
 			finishedMsgChan <- finishedMsg{}
 		})))
 	}()
+
+	sendNotification(m, m.album)
 
 	return tea.Batch(
 		func() tea.Msg { return playingMsg{music: m, streamer: streamer, sampleRate: format.SampleRate} },
