@@ -59,7 +59,7 @@ podden -m path
 - [x] add config
 - [x] add a help menu
 - [ ] highlight lyrics
-- [ ] system notifications
+- [x] system notifications
 - [ ] volume control
 - [ ] add cover image
 
