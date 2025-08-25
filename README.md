@@ -76,6 +76,6 @@ If you’d like to help improve podden, you can:
 
 - [Charmbracelet](https://github.com/charmbracelet) for the TUI libraries
 - [gopxl](https://github.com/gopxl/beep) for the beep audio library
-- [0xAX](https://github.com/0xAX/notificator) for the desktop library
+- [0xAX](https://github.com/0xAX/notificator) for the desktop notification library
 - [lrclib](https://lrclib.net) for the synchronized lyrics
 - The iPod Classic (5th Gen) — for inspiring the look & feel
