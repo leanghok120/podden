@@ -15,6 +15,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dhowden/tag"
 	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/effects"
 	"github.com/gopxl/beep/mp3"
 	"github.com/gopxl/beep/speaker"
 )
@@ -56,6 +57,7 @@ type playingMsg struct {
 	music      music
 	streamer   beep.StreamSeekCloser
 	sampleRate beep.SampleRate
+	volume     *effects.Volume
 }
 
 type lrcLibResponse struct {
@@ -280,6 +282,12 @@ func playMusic(m music) tea.Msg {
 		f.Close()
 		return errMsg{err}
 	}
+	volume := &effects.Volume{
+		Streamer: streamer,
+		Base:     2,
+		Volume:   0,
+		Silent:   false,
+	}
 
 	speaker.Clear()
 
@@ -288,7 +296,7 @@ func playMusic(m music) tea.Msg {
 	finishedMsgChan := make(chan tea.Msg, 1)
 
 	go func() {
-		speaker.Play(beep.Seq(streamer, beep.Callback(func() {
+		speaker.Play(beep.Seq(volume, beep.Callback(func() {
 			finishedMsgChan <- finishedMsg{}
 		})))
 	}()
@@ -296,7 +304,9 @@ func playMusic(m music) tea.Msg {
 	sendNotification(m, m.album)
 
 	return tea.Batch(
-		func() tea.Msg { return playingMsg{music: m, streamer: streamer, sampleRate: format.SampleRate} },
+		func() tea.Msg {
+			return playingMsg{music: m, streamer: streamer, volume: volume, sampleRate: format.SampleRate}
+		},
 		func() tea.Msg { return <-finishedMsgChan },
 		func() tea.Msg { return fetchLyrics(m.title, m.artist) },
 		tickCmd(streamer, format.SampleRate),

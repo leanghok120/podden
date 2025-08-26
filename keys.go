@@ -15,7 +15,7 @@ func (k keyMap) FullHelp() [][]key.Binding {
 		{k.Up, k.Down, k.Next, k.Prev},
 		{k.Albums, k.Songs, k.Artists, k.Playing},
 		{k.Play, k.Pause, k.Forward, k.Rewind},
-		{k.Help, k.Quit},
+		{k.Help, k.Quit, k.Increase, k.Decrease},
 	}
 }
 
@@ -31,6 +31,10 @@ type keyMap struct {
 	Prev    key.Binding
 	Forward key.Binding
 	Rewind  key.Binding
+
+	// volume control
+	Increase key.Binding
+	Decrease key.Binding
 
 	// page navigation
 	Albums  key.Binding
@@ -76,6 +80,16 @@ var keys = keyMap{
 	Rewind: key.NewBinding(
 		key.WithKeys("left"),
 		key.WithHelp("←", "rewind"),
+	),
+
+	// volume control
+	Increase: key.NewBinding(
+		key.WithKeys("+"),
+		key.WithHelp("+", "increase volume"),
+	),
+	Decrease: key.NewBinding(
+		key.WithKeys("-"),
+		key.WithHelp("-", "decrease volume"),
 	),
 
 	// page navigation

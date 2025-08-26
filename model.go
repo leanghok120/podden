@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/effects"
 	"github.com/gopxl/beep/speaker"
 )
 
@@ -28,6 +29,7 @@ type model struct {
 	total       time.Duration
 	currPlaying music
 	streamer    beep.StreamSeekCloser
+	volume      *effects.Volume
 	sampleRate  beep.SampleRate
 }
 
@@ -131,6 +133,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.loaded = false
 				m.showArtists = false
 				m.showAlbums = false
+
+			case "+":
+				speaker.Lock()
+				m.volume.Volume += 0.5
+				speaker.Unlock()
+
+			case "-":
+				speaker.Lock()
+				m.volume.Volume -= 0.5
+				speaker.Unlock()
 			}
 		}
 
@@ -175,6 +187,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.playing = true
 		m.currPlaying = msg.music
 		m.streamer = msg.streamer
+		m.volume = msg.volume
 		m.sampleRate = msg.sampleRate
 		m.lyrics = nil // Reset lyrics for the new song
 		m.currLyric = "♪"
