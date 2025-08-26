@@ -60,7 +60,7 @@ podden -m path
 - [x] add a help menu
 - [ ] highlight lyrics
 - [x] system notifications
-- [ ] volume control
+- [x] volume control
 - [ ] add cover image
 
 ## 🤝 Contributing
