@@ -87,6 +87,13 @@ func tickCmd(streamer beep.StreamSeekCloser, sr beep.SampleRate) tea.Cmd {
 	})
 }
 
+// global volume streamer
+var volume = &effects.Volume{
+	Base:   2,
+	Volume: 0,
+	Silent: false,
+}
+
 func fetchMusics() tea.Msg {
 	var musics []music
 	var dir string
@@ -282,12 +289,7 @@ func playMusic(m music) tea.Msg {
 		f.Close()
 		return errMsg{err}
 	}
-	volume := &effects.Volume{
-		Streamer: streamer,
-		Base:     2,
-		Volume:   0,
-		Silent:   false,
-	}
+	volume.Streamer = streamer
 
 	speaker.Clear()
 
