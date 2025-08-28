@@ -15,6 +15,8 @@ Inspired by the **iPod Classic (5th Gen)**.
 - **Playback Controls:** Pause, next, previous, fast forward, rewind.  
 - **Lyrics:** Synchronized song lyrics.
 - **Configuration:** Customize podden to look how you want it to.
+- **Desktop Notifications:** Cross platform desktop notifications
+- **Volume Control:** Control songs volume
 
 ## 📦 Installation
 
