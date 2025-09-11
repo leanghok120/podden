@@ -63,7 +63,7 @@ podden -m path
 - [ ] highlight lyrics
 - [x] system notifications
 - [x] volume control
-- [ ] add cover image
+- [ ] add cover image (fix styling and image not working in albums and artists page)
 
 ## 🤝 Contributing
 
