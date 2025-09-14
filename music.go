@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/blacktop/go-termimg"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dhowden/tag"
 	"github.com/gopxl/beep"
@@ -45,6 +46,7 @@ type (
 	albumsMsg   struct{ albums []album }
 	artistsMsg  struct{ artists []artist }
 	lyricsMsg   struct{ lyrics []lyricLine }
+	coverMsg    struct{ img *termimg.ImageWidget }
 	finishedMsg struct{}
 )
 
@@ -309,6 +311,7 @@ func playMusic(m music) tea.Msg {
 		func() tea.Msg {
 			return playingMsg{music: m, streamer: streamer, volume: volume, sampleRate: format.SampleRate}
 		},
+		func() tea.Msg { return drawCover(m.cover) },
 		func() tea.Msg { return <-finishedMsgChan },
 		func() tea.Msg { return fetchLyrics(m.title, m.artist) },
 		tickCmd(streamer, format.SampleRate),
@@ -355,4 +358,26 @@ func fetchLyrics(title, artist string) tea.Msg {
 	}
 
 	return lyricsMsg{lyrics}
+}
+
+func drawCover(data []byte) tea.Msg {
+	f, err := os.CreateTemp("", "cover-image")
+	if err != nil {
+		return errMsg{err}
+	}
+	defer os.Remove(f.Name())
+
+	_, err = f.Write(data)
+	if err != nil {
+		return errMsg{err}
+	}
+	f.Close()
+
+	img, err := termimg.NewImageWidgetFromFile(f.Name())
+	if err != nil {
+		return errMsg{err}
+	}
+	img.SetSize(12, 7)
+
+	return coverMsg{img}
 }

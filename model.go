@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/blacktop/go-termimg"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,6 +17,7 @@ import (
 type model struct {
 	help        help.Model
 	list        list.Model
+	img         *termimg.ImageWidget
 	width       int
 	height      int
 	loaded      bool
@@ -219,6 +221,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.list, cmd = m.nextSong(m.list)
 		return m, cmd
+
+	case coverMsg:
+		m.img = msg.img
+		return m, nil
 	}
 
 	if m.loaded || m.showAlbums || m.showArtists {
@@ -235,11 +241,10 @@ func (m model) View() string {
 	if m.playing {
 		title := titleStyle.Render(m.currPlaying.title)
 		artist := artistStyle.Render(m.currPlaying.artist)
-
 		timeInfo := timeStyle.Render(fmt.Sprintf("%s / %s", m.elapsed, m.total))
 		lyric := lyricStyle.Render(m.currLyric)
 
-		playingContent := lipgloss.JoinVertical(
+		mainContent := lipgloss.JoinVertical(
 			lipgloss.Left,
 			title,
 			artist,
@@ -249,8 +254,16 @@ func (m model) View() string {
 			"",
 			lyric,
 		)
+		mainBox := screenStyle.Render(mainContent)
 
-		return m.center(screenStyle.Render(playingContent))
+		finalBox := mainBox
+
+		if m.img != nil {
+			cover, _ := m.img.Render()
+			finalBox = lipgloss.JoinHorizontal(0, mainBox, cover)
+		}
+
+		return finalBox
 	}
 
 	if m.loaded || m.showAlbums || m.showArtists {
