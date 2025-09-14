@@ -64,6 +64,7 @@ podden -m path
 - [x] system notifications
 - [x] volume control
 - [ ] add cover image (fix styling and image not working in albums and artists page)
+- [ ] fix recursive file search
 
 ## 🤝 Contributing
 
