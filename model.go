@@ -239,6 +239,8 @@ func (m model) View() string {
 		timeInfo := timeStyle.Render(fmt.Sprintf("%s / %s", m.elapsed, m.total))
 		lyric := lyricStyle.Render(m.currLyric)
 
+		testCover("/home/leanghok/Pictures/121.png")
+
 		playingContent := lipgloss.JoinVertical(
 			lipgloss.Left,
 			title,

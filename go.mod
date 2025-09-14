@@ -9,10 +9,8 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.4
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/charmbracelet/x/mosaic v0.0.0-20250910184208-1e3a578dd00d
 	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/gopxl/beep v1.4.1
-	golang.org/x/image v0.25.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 

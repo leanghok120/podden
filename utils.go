@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
-	"image/jpeg"
 	"os"
 	"regexp"
 	"strconv"
@@ -13,7 +11,6 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/charmbracelet/x/mosaic"
 )
 
 type lyricLine struct {
@@ -30,7 +27,6 @@ var (
 	lyricStyle           lipgloss.Style
 	timeStyle            lipgloss.Style
 	helpMenu             lipgloss.Style
-	mos                  mosaic.Mosaic
 )
 
 func fallbackColor(value, def string) lipgloss.Color {
@@ -76,8 +72,6 @@ func initStyles() {
 
 	helpMenu = lipgloss.NewStyle().
 		Padding(0, 1)
-
-	mos = mosaic.New().Width(20).Height(15)
 }
 
 // helper functions
@@ -133,12 +127,6 @@ func customDelegate() list.ItemDelegate {
 // place content in the center and add a help menu
 func (m model) center(content string) string {
 	screen := lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
-
-	if m.playing {
-		cover, _ := loadImageFromBytes(m.currPlaying.cover)
-
-		screen += lipgloss.Place(0, 0, lipgloss.Right, lipgloss.Bottom, mos.Render(cover))
-	}
 
 	if cfg.ShowHelp {
 		return lipgloss.JoinVertical(lipgloss.Left, screen, helpMenu.Render(m.help.View(keys)))
@@ -234,28 +222,4 @@ func sendNotification(m music, body string) {
 
 	notifyTitle := fmt.Sprintf("%s - %s", m.title, m.artist)
 	notify.Push(notifyTitle, body, f.Name(), notificator.UR_NORMAL)
-}
-
-func loadImageFromBytes(data []byte) (image.Image, error) {
-	f, err := os.CreateTemp("", "cover-*.jpg")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(f.Name())
-	defer f.Close()
-
-	if _, err := f.Write(data); err != nil {
-		return nil, err
-	}
-
-	if _, err := f.Seek(0, 0); err != nil {
-		return nil, err
-	}
-
-	img, err := jpeg.Decode(f)
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
 }
