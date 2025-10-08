@@ -2,17 +2,17 @@
 
 ![demo](./assets/demo.png)
 
-A minimal **TUI MP3 player** written in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) and [beep](https://github.com/gopxl/beep).  
+A minimal **TUI MP3 player** written in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) and [beep](https://github.com/gopxl/beep).
 
 Inspired by the **iPod Classic (5th Gen)**.
 
 ## ✨ Features
 
-- **Songs view:** Browse and play songs from your music folder.  
-- **Albums view:** Browse albums.  
-- **Artists view:** Browse artists.  
+- **Songs view:** Browse and play songs from your music folder.
+- **Albums view:** Browse albums.
+- **Artists view:** Browse artists.
 - **Playing view:** Show currently playing song details.
-- **Playback Controls:** Pause, next, previous, fast forward, rewind.  
+- **Playback Controls:** Pause, next, previous, fast forward, rewind.
 - **Lyrics:** Synchronized song lyrics.
 - **Configuration:** Customize podden to look how you want it to.
 - **Desktop Notifications:** Cross platform desktop notifications
@@ -20,7 +20,7 @@ Inspired by the **iPod Classic (5th Gen)**.
 
 ## 📦 Installation
 
-Make sure you have [Go](https://go.dev/dl/) installed (version 1.21+ recommended).  
+Make sure you have [Go](https://go.dev/dl/) installed (version 1.21+ recommended).
 Then run:
 
 ```sh
@@ -55,12 +55,12 @@ podden -m path
 - [x] add albums page
 - [x] add artists page
 - [x] show elapsed time / total time
-- [x] add lyrics 
+- [x] add lyrics
 - [x] fast forward/rewind songs
 - [x] allow user to choose their own music folder
 - [x] add config
 - [x] add a help menu
-- [ ] highlight lyrics
+- [x] highlight lyrics
 - [x] system notifications
 - [x] volume control
 - [ ] add cover image (fix styling and image not working in albums and artists page)
