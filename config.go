@@ -23,6 +23,8 @@ type config struct {
 	ArtistForeground              string `yaml:"artist_foreground"`
 	TimeForeground                string `yaml:"time_foreground"`
 	LyricsForeground              string `yaml:"lyrics_foreground"`
+	LyricsHighlightForeground     string `yaml:"lyrics_highlight_foreground"`
+	LyricsHighlightBackground     string `yaml:"lyrics_highlight_background"`
 	ShowHelp                      bool   `yaml:"show_help"`
 }
 
@@ -46,6 +48,8 @@ dimmed_desc_foreground: ""
 artist_foreground: ""
 time_foreground: ""
 lyrics_foreground: ""
+lyrics_highlight_foreground: ""
+lyrics_highlight_background: ""
 
 show_help: true
 `

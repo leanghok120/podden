@@ -20,13 +20,13 @@ type lyricLine struct {
 
 // styles
 var (
-	screenStyle          lipgloss.Style
-	titleStyle           lipgloss.Style
-	titleBackgroundStyle lipgloss.Style
-	artistStyle          lipgloss.Style
-	lyricStyle           lipgloss.Style
-	timeStyle            lipgloss.Style
-	helpMenu             lipgloss.Style
+	screenStyle         lipgloss.Style
+	titleStyle          lipgloss.Style
+	artistStyle         lipgloss.Style
+	lyricStyle          lipgloss.Style
+	lyricHighlightStyle lipgloss.Style
+	timeStyle           lipgloss.Style
+	helpMenu            lipgloss.Style
 )
 
 func fallbackColor(value, def string) lipgloss.Color {
@@ -65,6 +65,14 @@ func initStyles() {
 		Width(26).
 		Align(lipgloss.Center).
 		Foreground(fallbackColor(cfg.LyricsForeground, "252")).
+		Italic(true)
+
+	lyricHighlightStyle = lipgloss.NewStyle().
+		Width(26).
+		Align(lipgloss.Center).
+		Foreground(fallbackColor(cfg.LyricsHighlightForeground, "230")).
+		Background(fallbackColor(cfg.LyricsHighlightBackground, "62")).
+		Bold(true).
 		Italic(true)
 
 	timeStyle = lipgloss.NewStyle().
@@ -205,6 +213,36 @@ func parseLRC(raw string) ([]lyricLine, error) {
 	}
 
 	return lyrics, nil
+}
+
+func renderHighlightedLyrics(lyrics []lyricLine, currentIdx int) string {
+	if len(lyrics) == 0 {
+		return lyricStyle.Render("♪")
+	}
+
+	const numLines = 5
+	const middleIdx = 2
+
+	var lines []string
+
+	// spaghetti code
+	startIdx := currentIdx - middleIdx
+	if startIdx < 0 {
+		startIdx = 0
+	}
+
+	for i := 0; i < numLines; i++ {
+		lyricIdx := startIdx + i
+		if lyricIdx >= len(lyrics) {
+			lines = append(lines, lyricStyle.Render(""))
+		} else if lyricIdx == currentIdx {
+			lines = append(lines, lyricHighlightStyle.Render(lyrics[lyricIdx].Text))
+		} else {
+			lines = append(lines, lyricStyle.Render(lyrics[lyricIdx].Text))
+		}
+	}
+
+	return lipgloss.JoinVertical(lipgloss.Center, lines...)
 }
 
 func sendNotification(m music, body string) {

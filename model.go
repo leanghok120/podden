@@ -15,24 +15,25 @@ import (
 )
 
 type model struct {
-	help        help.Model
-	list        list.Model
-	img         *termimg.ImageWidget
-	width       int
-	height      int
-	loaded      bool
-	showAlbums  bool // for albums page
-	showArtists bool // for artists page
-	playing     bool
-	paused      bool
-	lyrics      []lyricLine
-	currLyric   string
-	elapsed     time.Duration
-	total       time.Duration
-	currPlaying music
-	streamer    beep.StreamSeekCloser
-	volume      *effects.Volume
-	sampleRate  beep.SampleRate
+	help         help.Model
+	list         list.Model
+	img          *termimg.ImageWidget
+	width        int
+	height       int
+	loaded       bool
+	showAlbums   bool
+	showArtists  bool
+	playing      bool
+	paused       bool
+	lyrics       []lyricLine
+	currLyric    string
+	currLyricIdx int
+	elapsed      time.Duration
+	total        time.Duration
+	currPlaying  music
+	streamer     beep.StreamSeekCloser
+	volume       *effects.Volume
+	sampleRate   beep.SampleRate
 }
 
 func initModel() model {
@@ -193,6 +194,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.sampleRate = msg.sampleRate
 		m.lyrics = nil // Reset lyrics for the new song
 		m.currLyric = "♪"
+		m.currLyricIdx = -1
 		m.paused = false
 		m.elapsed = 0
 		m.total = 0
@@ -201,9 +203,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.elapsed = msg.elapsed
 		m.total = msg.total
 
-		for _, l := range m.lyrics {
+		m.currLyricIdx = -1
+		for i, l := range m.lyrics {
 			if m.elapsed.Seconds() >= l.Time {
 				m.currLyric = l.Text
+				m.currLyricIdx = i
 			} else {
 				break
 			}
@@ -242,7 +246,13 @@ func (m model) View() string {
 		title := titleStyle.Render(m.currPlaying.title)
 		artist := artistStyle.Render(m.currPlaying.artist)
 		timeInfo := timeStyle.Render(fmt.Sprintf("%s / %s", m.elapsed, m.total))
-		lyric := lyricStyle.Render(m.currLyric)
+
+		var lyricsContent string
+		if len(m.lyrics) > 0 {
+			lyricsContent = renderHighlightedLyrics(m.lyrics, m.currLyricIdx)
+		} else {
+			lyricsContent = lyricStyle.Render(m.currLyric)
+		}
 
 		mainContent := lipgloss.JoinVertical(
 			lipgloss.Left,
@@ -252,7 +262,7 @@ func (m model) View() string {
 			timeInfo,
 			"",
 			"",
-			lyric,
+			lyricsContent,
 		)
 		mainBox := screenStyle.Render(mainContent)
 
