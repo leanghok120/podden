@@ -158,8 +158,14 @@ func fetchMusics() tea.Msg {
 
 func fetchAlbums() tea.Msg {
 	albumsMap := make(map[string]album)
-	homeDir, _ := os.UserHomeDir()
-	dir := filepath.Join(homeDir, "Music")
+	var dir string
+
+	if *musicDirFlag == "" {
+		homeDir, _ := os.UserHomeDir()
+		dir = filepath.Join(homeDir, "Music")
+	} else {
+		dir = *musicDirFlag
+	}
 
 	filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -223,8 +229,14 @@ func fetchAlbums() tea.Msg {
 
 func fetchArtists() tea.Msg {
 	artistsMap := make(map[string]artist)
-	homeDir, _ := os.UserHomeDir()
-	dir := filepath.Join(homeDir, "Music")
+	var dir string
+
+	if *musicDirFlag == "" {
+		homeDir, _ := os.UserHomeDir()
+		dir = filepath.Join(homeDir, "Music")
+	} else {
+		dir = *musicDirFlag
+	}
 
 	filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
